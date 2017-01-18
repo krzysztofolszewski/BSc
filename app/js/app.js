@@ -10,7 +10,7 @@ app.controller('tableCtrl',/* ['$scope', '$http', '$filter', '$timeout', '$inter
     $scope.addTitle = "";
     $scope.addStartDate = "01/12/2017";
     $scope.addEndDate = "";
-    $scope.addTag = "dupa";
+    $scope.addTag = "";
     $scope.addAssignee = "";
     $scope.bulkStart = "";
     $scope.bulkEnd = "";
