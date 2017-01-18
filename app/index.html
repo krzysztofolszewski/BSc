@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<!--[if lt IE 7]>
+<!--<html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]&ndash;&gt;-->
+<!--&lt;!&ndash;[if IE 7]>-->
+<!--<html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]&ndash;&gt;-->
+<!--&lt;!&ndash;[if IE 8]>-->
+<!--<html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]&ndash;&gt;-->
+<!--&lt;!&ndash;[if gt IE 8]>&lt;!&ndash;>-->
+<!--<html lang="en" ng-app="myApp" class="no-js" xmlns="http://www.w3.org/1999/html"> &lt;!&ndash;<![endif]&ndash;&gt;-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AngularJS Table Editor</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="styleSheet" href="release/ui-grid.min.css"/>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-touch.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
+    <script src="//ui-grid.info/docs/grunt-scripts/csv.js"></script>
+    <script src="//ui-grid.info/docs/grunt-scripts/pdfmake.js"></script>
+    <script src="//ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
+    <script src="release/ui-grid.js"></script>
+    <script src="release/ui-grid.css"></script>
+    <script src="js/app.js"></script>
+    <script src="data.php"></script>
+    <script src="components/version/version.js"></script>
+    <script src="components/version/version-directive.js"></script>
+    <script src="components/version/interpolate-filter.js"></script>
+    <!--<script src="js/bootstrap.js"></script>-->
+    <!--<script src="js/ui-bootstrap-tpls-2.4.0.min.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+</head>
+<body>
+
+<div ng-app="myApp" ng-controller="tableCtrl">
+
+    <div>
+        <button ng-click="removeRows($index)"><span translate>Remove Package</span></button>
+    </div>
+    <div>
+        <label>Start date:</label>
+        <input ng-model="bulkStart">
+        <button ng-click="bulkChangeStartDate($index)"><span translate>Change start dates</span></button>
+    </div>
+    <div>
+        <label>End date:</label>
+        <input ng-model="bulkEnd">
+        <button ng-click="bulkChangeEndDate($index)"><span translate>Change end dates</span></button>
+    </div>
+    <div>
+        <label>Tags:</label>
+        <input ng-model="bulkTags">
+        <button ng-click="bulkChangeTags($index)"><span translate>Change tags</span></button>
+    </div>
+    <div>
+        <label>Assignee:</label>
+        <input ng-model="bulkAssignee">
+        <button ng-click="bulkChangeAssignee($index)"><span translate>Change assignee</span></button>
+    </div>
+    <table ng-style="{ width: windowWidthSize+30 + 'px' }">
+        <tr>
+            <td style="width:25px">
+                <div>
+                    <input ng-model="allRowsSelected" ng-change="selectAll(allRowsSelected)" type="checkbox"/>
+                </div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Title</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Duration</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Finish date</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Tags</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Assignee</div>
+            </td>
+
+        </tr>
+        <tr style="height: 30px;"></tr>
+        <tbody id="table-editor-body">
+        <tr ng-repeat="x in records | filter:search | filter:new_search"
+            ng-style="{ width: windowWidthSize+'px' }">
+
+            <td
+                height="30px"
+                style="width: 25px;">
+                <div>
+                    <input ng-model="currentPackageSelected" ng-checked="allRowsSelected" ng-change="checkedIndex(result)" type="checkbox"/>
+                </div>
+            </td>
+
+            <td
+                    new-record="addNewRow(addTitle)">
+                <div translate>{{x.Title}}</div>
+            </td>
+
+            <td style="width: 60px;"
+                new-record="addNewRow(addStartDate)">
+                <div translate>{{countDays(x.StartDate, x.EndDate) + " days"}}</div>
+            </td>
+
+            <td style="width: 90px;"
+                     new-record="addNewRow(addEndDate)">
+                <div translate>{{x.EndDate}}</div>
+            </td>
+
+            <td
+                    new-record="addNewRow(data)">
+                <div translate>{{x.Tag}}</div>
+            </td>
+
+            <td
+                    new-record="addNewRow(addAssignee)">
+                <div translate>{{x.Assignee}}</div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div id="grid1" ui-grid="{ data: response }" class="grid"></div>
+    <br>
+    <div>
+        <label>Title:</label>
+        <input ng-model="addTitle">
+    </div>
+    <div>
+        <label>Start date:</label>
+        <input ng-model="addStartDate">
+        <span ng-show="addStartDate.$error.date">Not a valid date</span>
+    </div>
+    <div>
+        <label>End date:</label>
+        <input ng-model="addEndDate">
+        <span ng-show="addEndDate.$error.date">Not a valid date</span>
+    </div>
+    <div>
+        <label>Tag:</label>
+        <input ng-model="addTag">
+    </div>
+    <div>
+        <label>Assignee:</label>
+        <input ng-model="addAssignee">
+    </div>
+    <div>
+        <button ng-click="addNewRow()"><span translate>Add New Package</span></button>
+    </div>
+
+    <!--<pre>Selected date is: <em>{{dt | date:'fullDate' }}</em></pre>-->
+
+    <!--<h4>Popup</h4>-->
+    <!--<div class="row">-->
+        <!--<div class="col-md-6">-->
+            <!--<p class="input-group">-->
+                <!--<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />-->
+                <!--<span class="input-group-btn">-->
+            <!--<button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>-->
+          <!--</span>-->
+            <!--</p>-->
+        <!--</div>-->
+
+        <!--<div class="col-md-6">-->
+            <!--<p class="input-group">-->
+                <!--<input type="text" class="form-control" uib-datepicker-popup ng-model="dt" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />-->
+                <!--<span class="input-group-btn">-->
+            <!--<button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>-->
+          <!--</span>-->
+            <!--</p>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row">-->
+        <!--<div class="col-md-6">-->
+            <!--<label>Format: <span class="muted-text">(manual alternate <em>{{altInputFormats[0]}}</em>)</span></label> <select class="form-control" ng-model="format" ng-options="f for f in formats"><option></option></select>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--<hr />-->
+    <!--<button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>-->
+    <!--<button type="button" class="btn btn-sm btn-default" ng-click="setDate(2009, 7, 24)">2009-08-24</button>-->
+    <!--<button type="button" class="btn btn-sm btn-danger" ng-click="clear()">Clear</button>-->
+    <!--<button type="button" class="btn btn-sm btn-default" ng-click="toggleMin()" uib-tooltip="After today restriction">Min date</button>-->
+</div>
+</body>
+</html>
