@@ -23,8 +23,14 @@
     <script src="//ui-grid.info/docs/grunt-scripts/pdfmake.js"></script>
     <script src="//ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
     <script src="http://ui-grid.info/release/ui-grid.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-messages.js"></script>
     <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
     <link rel="stylesheet" href="main.css" type="text/css">
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css"/>
+    <script type="text/javascript" src="bower_components/jquery/jquery.js"></script>
+    <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="bower_components/angular-ui-date/dist/date.js"></script>
     <script src="release/ui-grid.js"></script>
     <script src="release/ui-grid.css"></script>
     <script src="js/app.js"></script>
@@ -33,6 +39,13 @@
     <script src="components/version/version-directive.js"></script>
     <script src="components/version/interpolate-filter.js"></script>
     <script src="https://rawgit.com/dotansimha/angularjs-dropdown-multiselect/master/src/angularjs-dropdown-multiselect.js"></script>
+    <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="bower_components/angular-ui-utils/ui-utils.js"></script>
+    <link href="bower_components/angular-xeditable/dist/css/xeditable.css" rel="stylesheet">
+    <script src="bower_components/angular-xeditable/dist/js/xeditable.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     <!--<script src="js/bootstrap.js"></script>-->
     <!--<script src="js/ui-bootstrap-tpls-2.4.0.min.js"></script>-->
 
@@ -43,8 +56,23 @@
 </head>
 <body>
 
-    <div ng-app="myApp" ng-controller="tableCtrl">
-        <div ng-dropdown-multiselect="" options="filterData" selected-model="filterModel" extra-settings="filterSettings" translation-texts="filterTexts"></div>
+<div ng-app="myApp" ng-controller="tableCtrl">
+    <div class="toolbar">
+        <div class="pull-left">
+            <button class="addButton" ng-click="addNewRow()"><span translate>Add New Package</span></button>
+            <select ng-model="bulkSelect">
+                <option ng-repeat="x in bulks">{{x.label}}</option>
+            </select>
+            <button class="pull-left-further" ng-show="bulkSelect == 'Delete'" ng-click="removeRows($index)"><span translate>Remove Package</span></button>
+        </div>
+        <div class="pull-left-further">
+
+        </div>
+        <div class="pull-right">
+
+        </div>
+        <div ng-dropdown-multiselect="" options="filterData" selected-model="filterModel" extra-settings="filterSettings"
+             translation-texts="filterTexts"></div>
         <form>
             <div class="form-group">
                 <div class="input-group">
@@ -53,204 +81,272 @@
                 </div>
             </div>
         </form>
-        <div>
-            <label>Title:</label>
-            <input ng-model="addTitle">
-        </div>
-        <div>
-            <label>Start date:</label>
-            <input ng-model="addStartDate">
-            <span ng-show="addStartDate.$error.date">Not a valid date</span>
-        </div>
-        <div>
-            <label>End date:</label>
-            <input ng-model="addEndDate">
-            <span ng-show="addEndDate.$error.date">Not a valid date</span>
-        </div>
-        <div>
-            <label>Tag:</label>
-            <input ng-model="addTag">
-        </div>
-        <div>
-            <label>Assignee:</label>
-            <input ng-model="addAssignee">
-        </div>
-        <div>
-            <button ng-click="addNewRow()"><span translate>Add New Package</span></button>
-        </div>
+        <!--<div>-->
+            <!--<label>Title:</label>-->
+            <!--<input ng-model="addTitle">-->
+        <!--</div>-->
+        <!--<div>-->
+            <!--<label>Start date:</label>-->
+            <!--<input ng-model="addStartDate">-->
+            <!--<span ng-show="addStartDate.$error.date">Not a valid date</span>-->
+        <!--</div>-->
+        <!--<div>-->
+            <!--<label>End date:</label>-->
+            <!--<input ng-model="addEndDate">-->
+            <!--<span ng-show="addEndDate.$error.date">Not a valid date</span>-->
+        <!--</div>-->
+        <!--<div>-->
+            <!--<label>Tag:</label>-->
+            <!--<input ng-model="addTag">-->
+        <!--</div>-->
+        <!--<div>-->
+            <!--<label>Assignee:</label>-->
+            <!--<input ng-model="addAssignee">-->
+        <!--</div>-->
+        <!--<div>-->
+            <!--<label>Budget:</label>-->
+            <!--<input ng-model="addBudget">-->
+        <!--</div>-->
+        <!--<div>-->
+            <!--<label>Working week:</label>-->
+            <!--<select ng-model="addWorkingWeek">-->
+                <!--<option ng-repeat="x in workingWeeks">{{x}}</option>-->
+            <!--</select>-->
+        <!--</div>-->
+        <!--<div>-->
+            <!--<label>Scheduling mode:</label>-->
+            <!--<select ng-model="addSchedulingMode" >-->
+                <!--<option ng-repeat="x in schedulingModes">{{x}}</option>-->
+            <!--</select>-->
+        <!--</div>-->
 
-        <div>
-            <button ng-click="removeRows($index)"><span translate>Remove Package</span></button>
-        </div>
         <div>
             <button ng-click="bulkChangeStartDate($index)"><span translate>Change start dates</span></button>
             <label>Start date:</label>
-            <input ng-model="bulkStart">
+            <input type="date" ng-model="bulkStart">
         </div>
         <div>
             <button ng-click="bulkChangeEndDate($index)"><span translate>Change end dates</span></button>
             <label>End date:</label>
-            <input ng-model="bulkEnd">
+            <input type="date" ng-model="bulkEnd">
         </div>
         <div>
             <button ng-click="bulkChangeTag($index)"><span translate>Change tags</span></button>
             <label>Tags:</label>
-            <input ng-model="bulkTags">
+            <input type="text" ng-model="bulkTags">
         </div>
         <div>
             <button ng-click="bulkChangeAssignee($index)"><span translate>Change assignee</span></button>
             <label>Assignee:</label>
-            <input ng-model="bulkAssignee">
+            <input type="text" ng-model="bulkAssignee">
+        </div>
+        <div>
+            <button ng-click="bulkChangeBudget($index)"><span translate>Change budget</span></button>
+            <label>Budget:</label>
+            <input type="number" ng-model="bulkBudget">
+        </div>
+        <div>
+            <button ng-click="bulkChangeApprovedExtraCost($index)"><span translate>Change approved extra cost</span></button>
+            <label>Approved extra cost:</label>
+            <input type="number" ng-model="bulkApprovedExtraCost">
+        </div>
+        <div>
+            <button ng-click="bulkChangeWorkingWeek($index)"><span translate>Change working week</span></button>
+            <label>Working week:</label>
+            <select ng-model="bulkWorkingWeek" >
+                <option ng-repeat="x in workingWeeks">{{x}}</option>
+            </select>
+        </div>
+        <div>
+            <button ng-click="bulkChangeSchedulingMode($index)"><span translate>Change scheduling mode</span></button>
+            <label>Scheduling mode:</label>
+            <select ng-model="bulkSchedulingMode" >
+                <option ng-repeat="x in schedulingModes">{{x}}</option>
+            </select>
         </div>
         <div>
             <button ng-click="bulkChangeProgress($index)"><span translate>Change progress</span></button>
             <label>Progress:</label>
-            <input ng-model="bulkProgress">
+            <input type="number" max="100" min="0" ng-model="bulkProgress">
         </div>
         <div>
             <button ng-click="bulkChangeStatus($index)"><span translate>Change status</span></button>
             <label>Status:</label>
-            <select>
-                <option ng-model="bulkStatus" ng-repeat="x in states">{{x}}</option>
+            <select ng-model="bulkStatus" >
+                <option ng-repeat="x in states">{{x}}</option>
             </select>
         </div>
-
-        <div style="height: 25px;"></div>
-        <table ng-style="{ width: windowWidthSize + 50 + 'px' }">
-            <tr class="tableHeader">
-                <td style="width:25px">
-                    <div>
-                        <input ng-model="allRowsSelected" ng-change="selectAll(allRowsSelected)" type="checkbox"/>
-                    </div>
-                </td>
-                <td>
-                    <div class="cell-div text-center" translate>Title</div>
-                </td>
-                <td>
-                    <div class="cell-div text-center" translate>Duration</div>
-                </td>
-                <td>
-                    <div class="cell-div text-center" translate>Finish date</div>
-                </td>
-                <td>
-                    <div class="cell-div text-center" translate>Milestone</div>
-                </td>
-                <td>
-                    <div class="cell-div text-center" translate>Tags</div>
-                </td>
-                <td>
-                    <div class="cell-div text-center" translate>Assignee</div>
-                </td>
-                <td>
-                    <div class="cell-div text-center" translate>Progress</div>
-                </td>
-                <td>
-                    <div class="cell-div text-center" translate>State</div>
-                </td>
-            </tr>
-            <tbody id="table-editor-body">
-            <tr ng-repeat="x in records | filter:searchTable"
+        <div>
+            <button ng-click="removeRows($index)"><span translate>Remove Package</span></button>
+        </div>
+    </div>
+    <table id="tableEditor" ng-style="{ width: windowWidthSize + 33 + 'px' }">
+        <tr class="tableHeader">
+            <td style="width:25px">
+                <div>
+                    <input ng-model="allRowsSelected" name="masterCheckbox" ng-change="selectAll()" type="checkbox"/>
+                </div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Title</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Start</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Duration</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Finish</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Milestone</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Tags</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Assignee</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Budget</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Extra</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Working week</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Scheduling</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>Progress</div>
+            </td>
+            <td>
+                <div class="cell-div text-center" translate>State</div>
+            </td>
+        </tr>
+        <tbody id="table-editor-body">
+            <tr ng-repeat="x in records | filter:searchTable | filter:filterModel"
                 ng-style="{ width: window.width.toString() + 'px' }">
 
-                <td
-                    height="30px"
+                <td height="30px";
                     style="width: 25px;">
                     <div>
-                        <input ng-model="currentPackageSelected" ng-checked="allRowsSelected" ng-change="checkedIndex(x)" type="checkbox"/>
+                        <input ng-model="currentPackageSelected" ng-checked="allRowsSelected" ng-click="checkedIndex(x)" type="checkbox"/>
                     </div>
                 </td>
 
-                <td
-                        new-record="addNewRow(addTitle)">
-                    <div translate>{{x.Title}}</div>
+                <td>
+                    <div ng-hide="editTitleMode" ng-dblclick="editMode = true" translate>{{x.Title}}</div>
+                    <div ng-show="editTitleMode">
+                        <input type="text" ng-blur="editTitleMode = false" ngModel="titleInput" placeholder="{{x.Title}}" my-enter="editTitleMode = false" focus-me="editTitleMode">
+                    </div>
                 </td>
 
-                <td style="width: 60px;"
-                    new-record="addNewRow(addStartDate)">
-                    <div translate>{{countDays(x.StartDate, x.EndDate) + " days"}}</div>
+                <td style="width: 90px;">
+                    <div ng-hide="editStartDateMode" ng-dblclick="editStartDateMode = true" translate>{{ x.StartDate }}</div>
+                    <div ng-show="editStartDateMode">
+                        <input type="date" ng-blur="startDateEdit(x)" ngModel="startDateInput" placeholder="{{x.StartDate}}" focus-me="editStartDateMode">
+                    </div>
                 </td>
 
-                <td
-                    style="width: 55px;">
+                <td style="width: 60px;">
+                    <div translate>{{ (countDays(x.StartDate, x.EndDate) + 1) + durationSuffix(x.StartDate, x.EndDate) }}</div>
+                </td>
+
+                <td style="width: 90px;">
+                    <div ng-hide="editEndDateMode" ng-dblclick="editEndDateMode = true" translate>{{ x.EndDate }}</div>
+                    <div ng-show="editEndDateMode">
+                        <input type="date" ng-blur="endDateEdit(x)" ngModel="endDateInput" placeholder="{{x.EndDate}}" focus-me="editEndDateMode">
+                    </div>
+                </td>
+
+                <td style="width: 55px;">
                     <div>
-                        <input ng-model="milestoneSelected" ng-change="setMilestone(x)" type="checkbox"/>
+                        <input ng-model="milestoneCheckbox" ng-checked="x.Milestone" ng-change="changeMilestone(x)" type="checkbox"/>
                     </div>
                 </td>
 
-                <td style="width: 90px;"
-                         new-record="addNewRow(addEndDate)">
-                    <div translate>{{x.EndDate}}</div>
-                </td>
-
-                <td
-                        new-record="addNewRow(addTag)">
+                <td>
                     <div translate>{{x.Tag}}</div>
                 </td>
 
-                <td
-                        new-record="addNewRow(addAssignee)">
+                <td>
                     <div translate>{{x.Assignee}}</div>
                 </td>
-                <td
-                        new-record="addNewRow(addProgress)">
+                <td>
+                    <div translate>{{euroSuffix(x.Budget)}}</div>
+                </td>
+                <td>
+                    <div translate>{{euroSuffix(x.ApprovedExtraCost)}}</div>
+                </td>
+                <td>
+                    <div translate>{{x.WorkingWeek}}</div>
+                </td>
+                <td>
+                    <div translate>{{x.SchedulingMode}}</div>
+                </td>
+                <td>
                     <div translate>{{x.Progress}}</div>
                 </td>
                 <td>
                     <div translate>{{x.State}}</div>
                 </td>
             </tr>
-            </tbody>
-        </table>
-        <!--<br>-->
-        <!--<button id="refreshButton" type="button" class="btn btn-success" ng-click="refreshData()">Refresh Data</button>  <strong>Calls Pending:</strong> <span ng-bind="callsPending"></span>-->
-        <!--<br>-->
-        <!--<br>-->
-        <!--<strong>{{ myData.length }} rows</strong>-->
-        <!--<br>-->
-        <!--<div id="grid1" ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns ui-grid-importer ui-grid-exporter ui-grid-grouping class="grid"></div>-->
+        </tbody>
+    </table>
+    <!--<br>-->
+    <!--<button id="refreshButton" type="button" class="btn btn-success" ng-click="refreshData()">Refresh Data</button>  <strong>Calls Pending:</strong> <span ng-bind="callsPending"></span>-->
+    <!--<br>-->
+    <!--<br>-->
+    <!--<strong>{{ myData.length }} rows</strong>-->
+    <!--<br>-->
+    <!--<div id="grid1" ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns ui-grid-importer ui-grid-exporter ui-grid-grouping class="grid"></div>-->
 
-        <!--<div style="height: 25px;"></div>-->
+    <!--<div style="height: 25px;"></div>-->
 
-        <!--<div id="grid1" ui-grid="{ data: response }" class="grid"></div>-->
-        <br>
-        <div>
-            <button class="cancelButton" ng-click="cancelChanges()"><span translate>Cancel</span></button>
-            <button class="saveButton" ng-click="saveChanges()"><span translate>Save</span></button>
-        </div>
-
-        <!--<pre>Selected date is: <em>{{dt | date:'fullDate' }}</em></pre>-->
-
-        <!--<h4>Popup</h4>-->
-        <!--<div class="row">-->
-            <!--<div class="col-md-6">-->
-                <!--<p class="input-group">-->
-                    <!--<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />-->
-                    <!--<span class="input-group-btn">-->
-                <!--<button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>-->
-              <!--</span>-->
-                <!--</p>-->
-            <!--</div>-->
-
-            <!--<div class="col-md-6">-->
-                <!--<p class="input-group">-->
-                    <!--<input type="text" class="form-control" uib-datepicker-popup ng-model="dt" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />-->
-                    <!--<span class="input-group-btn">-->
-                <!--<button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>-->
-              <!--</span>-->
-                <!--</p>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="row">-->
-            <!--<div class="col-md-6">-->
-                <!--<label>Format: <span class="muted-text">(manual alternate <em>{{altInputFormats[0]}}</em>)</span></label> <select class="form-control" ng-model="format" ng-options="f for f in formats"><option></option></select>-->
-            <!--</div>-->
-        <!--</div>-->
-
-        <!--<hr />-->
-        <!--<button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>-->
-        <!--<button type="button" class="btn btn-sm btn-default" ng-click="setDate(2009, 7, 24)">2009-08-24</button>-->
-        <!--<button type="button" class="btn btn-sm btn-danger" ng-click="clear()">Clear</button>-->
-        <!--<button type="button" class="btn btn-sm btn-default" ng-click="toggleMin()" uib-tooltip="After today restriction">Min date</button>-->
+    <!--<div id="grid1" ui-grid="{ data: response }" class="grid"></div>-->
+    <br>
+    <div>
+        <button class="cancelButton" ng-click="cancelChanges()"><span translate>Cancel</span></button>
+        <button class="addButton" ng-click="addNewRow()"><span translate>Add New Package</span></button>
     </div>
+
+    <!--<pre>Selected date is: <em>{{dt | date:'fullDate' }}</em></pre>-->
+
+    <!--<h4>Popup</h4>-->
+    <!--<div class="row">-->
+    <!--<div class="col-md-6">-->
+    <!--<p class="input-group">-->
+    <!--<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />-->
+    <!--<span class="input-group-btn">-->
+    <!--<button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>-->
+    <!--</span>-->
+    <!--</p>-->
+    <!--</div>-->
+
+    <!--<div class="col-md-6">-->
+    <!--<p class="input-group">-->
+    <!--<input type="text" class="form-control" uib-datepicker-popup ng-model="dt" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />-->
+    <!--<span class="input-group-btn">-->
+    <!--<button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>-->
+    <!--</span>-->
+    <!--</p>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row">-->
+    <!--<div class="col-md-6">-->
+    <!--<label>Format: <span class="muted-text">(manual alternate <em>{{altInputFormats[0]}}</em>)</span></label> <select class="form-control" ng-model="format" ng-options="f for f in formats"><option></option></select>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <!--<hr />-->
+    <!--<button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>-->
+    <!--<button type="button" class="btn btn-sm btn-default" ng-click="setDate(2009, 7, 24)">2009-08-24</button>-->
+    <!--<button type="button" class="btn btn-sm btn-danger" ng-click="clear()">Clear</button>-->
+    <!--<button type="button" class="btn btn-sm btn-default" ng-click="toggleMin()" uib-tooltip="After today restriction">Min date</button>-->
+</div>
 </body>
 </html>
