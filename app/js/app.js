@@ -57,7 +57,6 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
     $scope.bulkWorkingWeek = "Mon-Fri";
     $scope.bulkSchedulingMode = "Manual";
     $scope.bulkStatus = "Verified";
-    $scope.titleInput = "";
     $scope.startDateInput = new Date();
     $scope.endDateInput = new Date();
     $scope.searchTable = "";
@@ -80,7 +79,7 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
                 "ApprovedExtraCost": "",
                 "WorkingWeek": "Mon-Fri",
                 "SchedulingMode": "Manual",
-                "Progress": "0%",
+                "Progress": 0,
                 "State": "Not started"
             });
         } else if (now.getMonth() <= 8 && now.getDate() > 8) {
@@ -95,7 +94,7 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
                 "ApprovedExtraCost": "",
                 "WorkingWeek": "Mon-Fri",
                 "SchedulingMode": "Manual",
-                "Progress": "0%",
+                "Progress": 0,
                 "State": "Not started"
             });
         } else if (now.getMonth() > 8 && now.getDate() <= 8) {
@@ -110,7 +109,7 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
                 "ApprovedExtraCost": "",
                 "WorkingWeek": "Mon-Fri",
                 "SchedulingMode": "Manual",
-                "Progress": "0%",
+                "Progress": 0,
                 "State": "Not started"
             });
         } else {
@@ -125,7 +124,7 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
                 "ApprovedExtraCost": "",
                 "WorkingWeek": "Mon-Fri",
                 "SchedulingMode": "Manual",
-                "Progress": "0%",
+                "Progress": 0,
                 "State": "Not started"
             });
         }
@@ -133,7 +132,7 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
 
     $scope.filterModel = [];
     $scope.filterData = [{id: 1, label: "Verified"}, {id: 2, label: "Awaiting sign-off"}, {id: 3, label: "In progress"}, {id: 4, label: "Problem"}, {id: 5, label: "Not started"}];
-    $scope.bulks = [{id: 1, label: "Delete"}, {id: 2, label: "Start date"}, {id: 3, label: "End date"}, {id: 4, label: "Tags"}, {id: 5, label: "Assignee"}, {id: 6, label: "Budget"}, {id: 7, label: "Approved extra cost"}, {id: 8, label: "Working week"}, {id: 9, label: "Scheduling mode"}, {id: 10, label: "Progress"}, {id: 11, label: "Status"}];
+    $scope.bulks = ["Delete", "Start date", "End date", "Tags", "Assignee", "Budget", "Approved extra cost", "Working week", "Scheduling mode", "Progress", "Status"];
     $scope.filterSettings = {};
     $scope.filterTexts = {buttonDefaultText: 'Filter tasks'};
 
@@ -180,14 +179,25 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
     $scope.bulkChangeStartDate = function (index) {
         angular.forEach($scope.tickedIndex, function (value, index) {
             var index = $scope.records.indexOf(value);
+            if ($scope.countDays ($scope.bulkStart, $scope.records[index].EndDate) < 0) {
+                if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() > 8) {
+                    $scope.records[index].EndDate = ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                } else if ($scope.bulkStart.getMonth() <= 8 && $scope.bulkStart.getDate() > 8) {
+                    $scope.records[index].EndDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                } else if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() <= 8) {
+                    $scope.records[index].EndDate = ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                } else {
+                    $scope.records[index].EndDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                }
+            }
             if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() > 8) {
-                $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear()
+                $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
             } else if ($scope.bulkStart.getMonth() <= 8 && $scope.bulkStart.getDate() > 8) {
-                $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear()
+                $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
             } else if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() <= 8) {
-                $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear()
+                $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
             } else {
-                $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear()
+                $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
             }
         });
         $scope.bulkStart = new Date();
@@ -196,14 +206,25 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
     $scope.bulkChangeEndDate = function (index) {
         angular.forEach($scope.tickedIndex, function (value, index) {
             var index = $scope.records.indexOf(value);
+            if ($scope.countDays ($scope.records[index].StartDate, $scope.bulkEnd) < 0) {
+                if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() > 8) {
+                    $scope.records[index].StartDate = ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+                } else if ($scope.bulkEnd.getMonth() <= 8 && $scope.bulkEnd.getDate() > 8) {
+                    $scope.records[index].StartDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+                } else if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() <= 8) {
+                    $scope.records[index].StartDate = ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+                } else {
+                    $scope.records[index].StartDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+                }
+            }
             if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() > 8) {
-                $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear()
+                $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
             } else if ($scope.bulkEnd.getMonth() <= 8 && $scope.bulkEnd.getDate() > 8) {
-                $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear()
+                $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
             } else if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() <= 8) {
-                $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear()
+                $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
             } else {
-                $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear()
+                $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
             }
         });
         $scope.bulkEnd = new Date();
@@ -260,23 +281,26 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
     $scope.bulkChangeProgress = function (index) {
         angular.forEach($scope.tickedIndex, function (value, index) {
             var index = $scope.records.indexOf(value);
-            $scope.records[index].Progress = $scope.bulkProgress;
-            if ($scope.bulkProgress === "100%") {
+            var now = new Date();
+            if ($scope.bulkProgress === 100) {
                 if ($scope.records[index].State != "Verified" && $scope.records[index].State != "Awaiting sign-off") {
+                    $scope.records[index].Progress = $scope.bulkProgress;
                     $scope.records[index].State = "Awaiting sign-off";
                 }
-            } else if ($scope.bulkProgress === "0%") {
-                var now = new Date();
+            } else if ($scope.bulkProgress === 0) {
                 if ($scope.countDays($scope.records[index].EndDate, now) > 0) {
+                    $scope.records[index].Progress = $scope.bulkProgress;
                     $scope.records[index].State = "Problem";
                 } else {
                     $scope.records[index].State = "Not started";
+                    $scope.records[index].Progress = $scope.bulkProgress;
                 }
             } else if ($scope.bulkProgress > 0 && $scope.bulkProgress < 100) {
-                var now = new Date();
                 if ($scope.countDays($scope.records[index].EndDate, now) > 0) {
+                    $scope.records[index].Progress = $scope.bulkProgress;
                     $scope.records[index].State = "Problem";
                 } else {
+                    $scope.records[index].Progress = $scope.bulkProgress;
                     $scope.records[index].State = "In progress";
                 }
             } else {
@@ -291,27 +315,88 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
             var index = $scope.records.indexOf(value);
             $scope.records[index].State = $scope.bulkStatus;
             if ($scope.bulkStatus === "Verified" || $scope.bulkStatus === "Awaiting sign-off") {
-                $scope.records[index].Progress = "100%";
+                $scope.records[index].Progress = 100;
             } else if ($scope.bulkStatus === "In progress") {
-                if ($scope.records[index].Progress === "100%" || $scope.records[index].Progress === "0%") {
-                    $scope.records[index].Progress = "50%";
+                if ($scope.records[index].Progress === 100 || $scope.records[index].Progress === 0) {
+                    $scope.records[index].Progress = 50;
                 }
             } else if ($scope.bulkStatus === "Not started") {
-                $scope.records[index].Progress = "0%";
+                $scope.records[index].Progress = 0;
             }
             else if ($scope.bulkStatus === "Problem") {
-                if ($scope.records[index].Progress === "100%") {
-                    $scope.records[index].Progress = "0%";
+                if ($scope.records[index].Progress === 100) {
+                    $scope.records[index].Progress = 0;
                 }
             }
         });
         $scope.bulkStatus = "Verified";
     };
 
-    $scope.updateTitle = function (keyEvent, record) {
-        $scope.records[record].Title = $scope.titleInput;
-        $scope.editTitleMode = false;
-        $scope.titleInput = "";
+    $scope.startDateEdit = function (index) {
+        if ($scope.x.StartDate.getMonth() > 8 && $scope.x.StartDate.getDate() > 8) {
+            $scope.records[index].StartDate = ($scope.x.StartDate.getMonth() + 1) + "/" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
+        } else if ($scope.x.StartDate.getMonth() <= 8 && $scope.x.StartDate.getDate() > 8) {
+            $scope.records[index].StartDate = "0" + ($scope.x.StartDate.getMonth() + 1) + "/" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
+        } else if ($scope.x.StartDate.getMonth() > 8 && $scope.x.StartDate.getDate() <= 8) {
+            $scope.records[index].StartDate = ($scope.x.StartDate.getMonth() + 1) + "/0" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
+        } else {
+            $scope.records[index].StartDate = "0" + ($scope.x.StartDate.getMonth() + 1) + "/0" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
+        }
+        $scope.editStartDateMode = false;
+    };
+
+    $scope.endDateEdit = function (index) {
+        if ($scope.x.EndDate.getMonth() > 8 && $scope.x.EndDate.getDate() > 8) {
+            $scope.records[index].EndDate = ($scope.x.EndDate.getMonth() + 1) + "/" + ($scope.x.EndDate.getDate()) + "/" + $scope.x.EndDate.getFullYear();
+        } else if ($scope.x.EndDate.getMonth() <= 8 && $scope.x.EndDate.getDate() > 8) {
+            $scope.records[index].EndDate = "0" + ($scope.x.EndDate.getMonth() + 1) + "/" + ($scope.x.EndDate.getDate()) + "/" + $scope.x.EndDate.getFullYear();
+        } else if ($scope.x.EndDate.getMonth() > 8 && $scope.x.EndDate.getDate() <= 8) {
+            $scope.records[index].EndDate = ($scope.x.EndDate.getMonth() + 1) + "/0" + ($scope.x.EndDate.getDate()) + "/" + $scope.x.EndDate.getFullYear();
+        } else {
+            $scope.records[index].EndDate = "0" + ($scope.x.EndDate.getMonth() + 1) + "/0" + ($scope.x.EndDate.getDate()) + "/" + $scope.x.EndDate.getFullYear();
+        }
+        $scope.editEndDateMode = false;
+    };
+
+    $scope.updateState = function (index) {
+        if ($scope.x.Progress === 100) {
+            if ($scope.records[index].State != "Verified" && $scope.records[index].State != "Awaiting sign-off") {
+                $scope.records[index].State = "Awaiting sign-off";
+            }
+        } else if ($scope.x.Progress === 0) {
+            var now = new Date();
+            if ($scope.countDays($scope.records[index].EndDate, now) > 0) {
+                $scope.records[index].State = "Problem";
+            } else {
+                $scope.records[index].State = "Not started";
+            }
+        } else if ($scope.x.Progress > 0 && $scope.x.Progress < 100) {
+            var now = new Date();
+            if ($scope.countDays($scope.records[index].EndDate, now) > 0) {
+                $scope.records[index].State = "Problem";
+            } else {
+                $scope.records[index].State = "In progress";
+            }
+        } else {
+            alert("Invalid progress!");
+        }
+    };
+
+    $scope.updateProgress = function () {
+        if ($scope.x.State === "Verified" || $scope.x.State === "Awaiting sign-off") {
+            $scope.x.Progress = 100;
+        } else if ($scope.x.State === "In progress") {
+            if ($scope.x.Progress === 100 || x.Progress === 0) {
+                $scope.x.Progress = 50;
+            }
+        } else if ($scope.x.State === "Not started") {
+            $scope.x.Progress = 0;
+        }
+        else if ($scope.x.State === "Problem") {
+            if ($scope.x.Progress === 100) {
+                $scope.x.Progress = 0;
+            }
+        }
     };
 
     $scope.milestoneSelected = function (record){
@@ -336,14 +421,6 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
 
     $scope.checkBulk = function () {
         return $scope.bulkSelect.id;
-    }
-
-    $scope.startDateEdit = function (record) {
-        $scope.records[record].startDate = $scope.startDateInput;
-    }
-
-    $scope.endDateEdit = function (record) {
-        $scope.records[record].endDate = $scope.endDateInput;
     }
 
     $scope.countDays = function (date1, date2) {

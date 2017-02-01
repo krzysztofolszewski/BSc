@@ -61,242 +61,216 @@
         <div class="pull-left">
             <button class="addButton" ng-click="addNewRow()"><span translate>Add New Package</span></button>
             <select ng-model="bulkSelect">
-                <option ng-repeat="x in bulks">{{x.label}}</option>
+                <option ng-repeat="x in bulks">{{x}}</option>
             </select>
             <button class="pull-left-further" ng-show="bulkSelect == 'Delete'" ng-click="removeRows($index)"><span translate>Remove Package</span></button>
         </div>
-        <div class="pull-left-further">
-
+        <div class="pull-left">
+            <div ng-show="bulkSelect == 'Start date'">
+                <input type="date" ng-model="bulkStart">
+                <button class="bulkConfirm" ng-click="bulkChangeStartDate($index)"><span translate>Change start dates</span></button>
+            </div>
+            <div ng-show="bulkSelect == 'End date'">
+                <input type="date" ng-model="bulkEnd">
+                <button ng-click="bulkChangeEndDate($index)"><span translate>Change end dates</span></button>
+            </div>
+            <div ng-show="bulkSelect == 'Tags'">
+                <input type="text" ng-model="bulkTags">
+                <button ng-click="bulkChangeTag($index)"><span translate>Change tags</span></button>
+            </div>
+            <div ng-show="bulkSelect == 'Assignee'">
+                <input type="text" ng-model="bulkAssignee">
+                <button ng-click="bulkChangeAssignee($index)"><span translate>Change assignee</span></button>
+            </div>
+            <div ng-show="bulkSelect == 'Budget'">
+                <input type="number" ng-model="bulkBudget">
+                <button ng-click="bulkChangeBudget($index)"><span translate>Change budget</span></button>
+            </div>
+            <div ng-show="bulkSelect == 'Approved extra cost'">
+                <input type="number" ng-model="bulkApprovedExtraCost">
+                <button ng-click="bulkChangeApprovedExtraCost($index)"><span translate>Change approved extra cost</span></button>
+            </div>
+            <div ng-show="bulkSelect == 'Working week'">
+                <select ng-model="bulkWorkingWeek" >
+                    <option ng-repeat="x in workingWeeks">{{x}}</option>
+                </select>
+                <button ng-click="bulkChangeWorkingWeek($index)"><span translate>Change working week</span></button>
+            </div>
+            <div ng-show="bulkSelect == 'Scheduling mode'">
+                <select ng-model="bulkSchedulingMode" >
+                    <option ng-repeat="x in schedulingModes">{{x}}</option>
+                </select>
+                <button ng-click="bulkChangeSchedulingMode($index)"><span translate>Change scheduling mode</span></button>
+            </div>
+            <div ng-show="bulkSelect == 'Progress'">
+                <input type="number" max="100" min="0" ng-model="bulkProgress">
+                <button ng-click="bulkChangeProgress($index)"><span translate>Change progress</span></button>
+            </div>
+            <div ng-show="bulkSelect == 'Status'">
+                <select ng-model="bulkStatus" >
+                    <option ng-repeat="x in states">{{x}}</option>
+                </select>
+                <button ng-click="bulkChangeStatus($index)"><span translate>Change status</span></button>
+            </div>
         </div>
         <div class="pull-right">
-
+            <div ng-dropdown-multiselect="" options="filterData" selected-model="filterModel" extra-settings="filterSettings"
+                 translation-texts="filterTexts"></div>
         </div>
-        <div ng-dropdown-multiselect="" options="filterData" selected-model="filterModel" extra-settings="filterSettings"
-             translation-texts="filterTexts"></div>
-        <form>
-            <div class="form-group">
-                <div class="input-group">
-                    <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                    <input type="text" class="form-control" placeholder="Search" ng-model="searchTable">
-                </div>
-            </div>
-        </form>
-        <!--<div>-->
-            <!--<label>Title:</label>-->
-            <!--<input ng-model="addTitle">-->
-        <!--</div>-->
-        <!--<div>-->
-            <!--<label>Start date:</label>-->
-            <!--<input ng-model="addStartDate">-->
-            <!--<span ng-show="addStartDate.$error.date">Not a valid date</span>-->
-        <!--</div>-->
-        <!--<div>-->
-            <!--<label>End date:</label>-->
-            <!--<input ng-model="addEndDate">-->
-            <!--<span ng-show="addEndDate.$error.date">Not a valid date</span>-->
-        <!--</div>-->
-        <!--<div>-->
-            <!--<label>Tag:</label>-->
-            <!--<input ng-model="addTag">-->
-        <!--</div>-->
-        <!--<div>-->
-            <!--<label>Assignee:</label>-->
-            <!--<input ng-model="addAssignee">-->
-        <!--</div>-->
-        <!--<div>-->
-            <!--<label>Budget:</label>-->
-            <!--<input ng-model="addBudget">-->
-        <!--</div>-->
-        <!--<div>-->
-            <!--<label>Working week:</label>-->
-            <!--<select ng-model="addWorkingWeek">-->
-                <!--<option ng-repeat="x in workingWeeks">{{x}}</option>-->
-            <!--</select>-->
-        <!--</div>-->
-        <!--<div>-->
-            <!--<label>Scheduling mode:</label>-->
-            <!--<select ng-model="addSchedulingMode" >-->
-                <!--<option ng-repeat="x in schedulingModes">{{x}}</option>-->
-            <!--</select>-->
-        <!--</div>-->
-
-        <div>
-            <button ng-click="bulkChangeStartDate($index)"><span translate>Change start dates</span></button>
-            <label>Start date:</label>
-            <input type="date" ng-model="bulkStart">
-        </div>
-        <div>
-            <button ng-click="bulkChangeEndDate($index)"><span translate>Change end dates</span></button>
-            <label>End date:</label>
-            <input type="date" ng-model="bulkEnd">
-        </div>
-        <div>
-            <button ng-click="bulkChangeTag($index)"><span translate>Change tags</span></button>
-            <label>Tags:</label>
-            <input type="text" ng-model="bulkTags">
-        </div>
-        <div>
-            <button ng-click="bulkChangeAssignee($index)"><span translate>Change assignee</span></button>
-            <label>Assignee:</label>
-            <input type="text" ng-model="bulkAssignee">
-        </div>
-        <div>
-            <button ng-click="bulkChangeBudget($index)"><span translate>Change budget</span></button>
-            <label>Budget:</label>
-            <input type="number" ng-model="bulkBudget">
-        </div>
-        <div>
-            <button ng-click="bulkChangeApprovedExtraCost($index)"><span translate>Change approved extra cost</span></button>
-            <label>Approved extra cost:</label>
-            <input type="number" ng-model="bulkApprovedExtraCost">
-        </div>
-        <div>
-            <button ng-click="bulkChangeWorkingWeek($index)"><span translate>Change working week</span></button>
-            <label>Working week:</label>
-            <select ng-model="bulkWorkingWeek" >
-                <option ng-repeat="x in workingWeeks">{{x}}</option>
-            </select>
-        </div>
-        <div>
-            <button ng-click="bulkChangeSchedulingMode($index)"><span translate>Change scheduling mode</span></button>
-            <label>Scheduling mode:</label>
-            <select ng-model="bulkSchedulingMode" >
-                <option ng-repeat="x in schedulingModes">{{x}}</option>
-            </select>
-        </div>
-        <div>
-            <button ng-click="bulkChangeProgress($index)"><span translate>Change progress</span></button>
-            <label>Progress:</label>
-            <input type="number" max="100" min="0" ng-model="bulkProgress">
-        </div>
-        <div>
-            <button ng-click="bulkChangeStatus($index)"><span translate>Change status</span></button>
-            <label>Status:</label>
-            <select ng-model="bulkStatus" >
-                <option ng-repeat="x in states">{{x}}</option>
-            </select>
-        </div>
-        <div>
-            <button ng-click="removeRows($index)"><span translate>Remove Package</span></button>
+        <div class="pull-right">
+            <form>
+                <input type="text" class="form" placeholder="Search" ng-model="searchTable">
+            </form>
         </div>
     </div>
-    <table id="tableEditor" ng-style="{ width: windowWidthSize + 33 + 'px' }">
-        <tr class="tableHeader">
-            <td style="width:25px">
-                <div>
-                    <input ng-model="allRowsSelected" name="masterCheckbox" ng-change="selectAll()" type="checkbox"/>
-                </div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Title</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Start</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Duration</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Finish</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Milestone</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Tags</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Assignee</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Budget</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Extra</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Working week</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Scheduling</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>Progress</div>
-            </td>
-            <td>
-                <div class="cell-div text-center" translate>State</div>
-            </td>
-        </tr>
-        <tbody id="table-editor-body">
-            <tr ng-repeat="x in records | filter:searchTable | filter:filterModel"
-                ng-style="{ width: window.width.toString() + 'px' }">
-
-                <td height="30px";
-                    style="width: 25px;">
-                    <div>
-                        <input ng-model="currentPackageSelected" ng-checked="allRowsSelected" ng-click="checkedIndex(x)" type="checkbox"/>
+    <div class="editorContent">
+        <table id="tableEditor" style="width: auto">
+            <tr class="tableHeader">
+                <td>
+                    <div class="cell-div text-center">
+                        <input ng-model="allRowsSelected" name="masterCheckbox" ng-change="selectAll()" type="checkbox"/>
                     </div>
                 </td>
-
                 <td>
-                    <div ng-hide="editTitleMode" ng-dblclick="editMode = true" translate>{{x.Title}}</div>
-                    <div ng-show="editTitleMode">
-                        <input type="text" ng-blur="editTitleMode = false" ngModel="titleInput" placeholder="{{x.Title}}" my-enter="editTitleMode = false" focus-me="editTitleMode">
-                    </div>
-                </td>
-
-                <td style="width: 90px;">
-                    <div ng-hide="editStartDateMode" ng-dblclick="editStartDateMode = true" translate>{{ x.StartDate }}</div>
-                    <div ng-show="editStartDateMode">
-                        <input type="date" ng-blur="startDateEdit(x)" ngModel="startDateInput" placeholder="{{x.StartDate}}" focus-me="editStartDateMode">
-                    </div>
-                </td>
-
-                <td style="width: 60px;">
-                    <div translate>{{ (countDays(x.StartDate, x.EndDate) + 1) + durationSuffix(x.StartDate, x.EndDate) }}</div>
-                </td>
-
-                <td style="width: 90px;">
-                    <div ng-hide="editEndDateMode" ng-dblclick="editEndDateMode = true" translate>{{ x.EndDate }}</div>
-                    <div ng-show="editEndDateMode">
-                        <input type="date" ng-blur="endDateEdit(x)" ngModel="endDateInput" placeholder="{{x.EndDate}}" focus-me="editEndDateMode">
-                    </div>
-                </td>
-
-                <td style="width: 55px;">
-                    <div>
-                        <input ng-model="milestoneCheckbox" ng-checked="x.Milestone" ng-change="changeMilestone(x)" type="checkbox"/>
-                    </div>
-                </td>
-
-                <td>
-                    <div translate>{{x.Tag}}</div>
-                </td>
-
-                <td>
-                    <div translate>{{x.Assignee}}</div>
+                    <div class="cell-div text-left" translate>Title</div>
                 </td>
                 <td>
-                    <div translate>{{euroSuffix(x.Budget)}}</div>
+                    <div class="cell-div text-left" translate>Start</div>
                 </td>
                 <td>
-                    <div translate>{{euroSuffix(x.ApprovedExtraCost)}}</div>
+                    <div class="cell-div text-left" translate>Duration</div>
                 </td>
                 <td>
-                    <div translate>{{x.WorkingWeek}}</div>
+                    <div class="cell-div text-left" translate>Finish</div>
                 </td>
                 <td>
-                    <div translate>{{x.SchedulingMode}}</div>
+                    <div class="cell-div text-left" translate>Milestone</div>
                 </td>
                 <td>
-                    <div translate>{{x.Progress}}</div>
+                    <div class="cell-div text-left" translate>Tags</div>
                 </td>
                 <td>
-                    <div translate>{{x.State}}</div>
+                    <div class="cell-div text-left" translate>Assignee</div>
+                </td>
+                <td>
+                    <div class="cell-div text-left" translate>Budget</div>
+                </td>
+                <td>
+                    <div class="cell-div text-left" translate>Extra</div>
+                </td>
+                <td>
+                    <div class="cell-div text-left" translate>Working week</div>
+                </td>
+                <td>
+                    <div class="cell-div text-left" translate>Scheduling</div>
+                </td>
+                <td>
+                    <div class="cell-div text-left" translate>Progress</div>
+                </td>
+                <td>
+                    <div class="cell-div text-left" translate>State</div>
                 </td>
             </tr>
-        </tbody>
-    </table>
+            <tbody id="table-editor-body">
+                <tr ng-repeat="x in records | filter:searchTable | filter:filterModel"
+                    ng-style="{ width: window.width.toString() + 'px' }">
+
+                    <td style="width: 40px">
+                        <div class="cell-div text-center">
+                            <input ng-model="currentPackageSelected" ng-checked="allRowsSelected" ng-click="checkedIndex(x)" type="checkbox"/>
+                        </div>
+                    </td>
+
+                    <td class="titleCells">
+                        <div ng-hide="editTitleMode" ng-dblclick="editTitleMode = true" translate>{{x.Title}}</div>
+                        <div ng-show="editTitleMode">
+                            <input type="text" ng-model="x.Title" placeholder="{{x.Title}}" focus-me="editTitleMode">
+                        </div>
+                    </td>
+
+                    <td class="dateCells">
+                        <div ng-hide="editStartDateMode" ng-dblclick="editStartDateMode = true" translate>{{ x.StartDate }}</div>
+                        <div ng-show="editStartDateMode">
+                            <input type="date" ng-model="x.StartDate" ng-blur="startDateEdit($index)"  placeholder="{{x.StartDate}}" focus-me="editStartDateMode">
+                        </div>
+                    </td>
+
+                    <td class="durationCells">
+                        <div translate>{{ (countDays(x.StartDate, x.EndDate) + 1) + durationSuffix(x.StartDate, x.EndDate) }}</div>
+                    </td>
+
+                    <td class="dateCells">
+                        <div ng-hide="editEndDateMode" ng-dblclick="editEndDateMode = true" translate>{{ x.EndDate }}</div>
+                        <div ng-show="editEndDateMode">
+                            <input type="date" ng-model="x.EndDate" ng-blur="endDateEdit($index)" placeholder="{{x.EndDate}}" focus-me="editEndDateMode">
+                        </div>
+                    </td>
+
+                    <td class="milestoneCells">
+                        <div>
+                            <input ng-model="milestoneCheckbox" ng-checked="x.Milestone" ng-change="changeMilestone(x)" type="checkbox"/>
+                        </div>
+                    </td>
+
+                    <td class="tagCells">
+                        <div ng-hide="editTagMode" ng-dblclick="editTagMode = true" translate>{{x.Tag}}</div>
+                        <div ng-show="editTagMode">
+                            <input type="text" ng-model="x.Tag" placeholder="{{x.Tag}}" focus-me="editTagMode">
+                        </div>
+                    </td>
+
+                    <td class="assigneeCells">
+                        <div ng-hide="editAssigneeMode" ng-dblclick="editAssigneeMode = true" translate>{{x.Assignee}}</div>
+                        <div ng-show="editAssigneeMode">
+                            <input type="text" ng-model="x.Assignee" placeholder="{{x.Assignee}}" focus-me="editAssigneeMode">
+                        </div>
+                    </td>
+                    <td class="budgetCells">
+                        <div ng-hide="editBudgetMode" ng-dblclick="editBudgetMode = true" translate>{{euroSuffix(x.Budget)}}</div>
+                        <div ng-show="editBudgetMode">
+                            <input type="number" ng-model="x.Budget" placeholder="{{x.Budget}}" focus-me="editBudgetMode">
+                        </div>
+                    </td>
+                    <td class="extraCells">
+                        <div ng-hide="editExtraMode" ng-dblclick="editExtraMode = true" translate>{{euroSuffix(x.ApprovedExtraCost)}}</div>
+                        <div ng-show="editExtraMode">
+                            <input type="number" ng-model="x.ApprovedExtraCost" placeholder="{{x.ApprovedExtraCost}}" focus-me="editExtraMode">
+                        </div>
+                    </td>
+                    <td class="weekCells">
+                        <div ng-hide="editWeekMode" ng-dblclick="editWeekMode = true" translate>{{x.WorkingWeek}}</div>
+                        <div ng-show="editWeekMode">
+                            <select ng-model="x.WorkingWeek" placeholder="{{x.WorkingWeek}}" focus-me="editWeekMode" >
+                                <option ng-repeat="x in workingWeeks">{{x}}</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td class="modeCells">
+                        <div ng-hide="editModeMode" ng-dblclick="editModeMode = true" translate>{{x.WorkingWeek}}</div>
+                        <div ng-show="editModeMode">
+                            <select ng-model="x.SchedulingMode" placeholder="{{x.SchedulingMode}}" focus-me="editModeMode" >
+                                <option ng-repeat="x in schedulingModes">{{x}}</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td class="progressCells">
+                        <div ng-hide="editProgressMode" ng-dblclick="editProgressMode = true" translate>{{x.Progress + "%"}}</div>
+                        <div ng-show="editProgressMode">
+                            <input type="number" max="100" min="0" ng-model="x.Progress" placeholder="{{x.Progress}}" ng-blur="updateState($index)" focus-me="editProgressMode">
+                        </div>
+                    </td>
+                    <td class="stateCells">
+                        <div ng-hide="editStateMode" ng-dblclick="editStateMode = true" translate>{{x.State}}</div>
+                        <div ng-show="editStateMode">
+                            <select ng-model="x.State" placeholder="{{x.State}}" ng-blur="updateProgress()" focus-me="editStateMode" >
+                                <option ng-repeat="x in states">{{x}}</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <!--<br>-->
     <!--<button id="refreshButton" type="button" class="btn btn-success" ng-click="refreshData()">Refresh Data</button>  <strong>Calls Pending:</strong> <span ng-bind="callsPending"></span>-->
     <!--<br>-->
@@ -309,8 +283,10 @@
 
     <!--<div id="grid1" ui-grid="{ data: response }" class="grid"></div>-->
     <br>
-    <div>
+    <div class="bottomLeft">
         <button class="cancelButton" ng-click="cancelChanges()"><span translate>Cancel</span></button>
+    </div>
+    <div class="bottomRight">
         <button class="addButton" ng-click="addNewRow()"><span translate>Add New Package</span></button>
     </div>
 

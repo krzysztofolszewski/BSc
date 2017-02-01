@@ -10,7 +10,7 @@
 		"ApprovedExtraCost": "10000",
 		"WorkingWeek": "Mon-Sun",
 		"SchedulingMode": "Manual",
-		"Progress": "90%",
+		"Progress": "90",
 		"State": "Problem"
 	}, {
 		"Title": "Project2",
@@ -23,7 +23,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "100%",
+		"Progress": "100",
 		"State": "Verified"
 	}, {
 		"Title": "Project3",
@@ -36,7 +36,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "100%",
+		"Progress": "100",
 		"State": "Awaiting sign-off"
 	}, {
 		"Title": "Project4",
@@ -49,7 +49,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "38%",
+		"Progress": "38",
 		"State": "In progress"
 	}, {
 		"Title": "Project5",
@@ -62,7 +62,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Not started"
 	}, {
 		"Title": "Project6",
@@ -75,7 +75,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project7",
@@ -88,7 +88,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project8",
@@ -101,7 +101,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project9",
@@ -114,7 +114,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project10",
@@ -127,7 +127,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project11",
@@ -140,7 +140,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project12",
@@ -153,7 +153,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project13",
@@ -166,7 +166,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project14",
@@ -179,7 +179,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project15",
@@ -192,7 +192,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project16",
@@ -205,7 +205,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project17",
@@ -218,7 +218,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}, {
 		"Title": "Project18",
@@ -231,7 +231,7 @@
 		"ApprovedExtraCost": "0",
 		"WorkingWeek": "Mon-Fri",
 		"SchedulingMode": "Automatic",
-		"Progress": "0%",
+		"Progress": "0",
 		"State": "Problem"
 	}]
 }
