@@ -33,19 +33,23 @@ app.directive('focusMe', ['$timeout', '$parse', function ($timeout, $parse) {
         }
     };
 }]);
+app.directive('fixedTableHeaders', ['$timeout', function($timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            $timeout(function() {
+                var container = element.parentsUntil(attrs.fixedTableHeaders);
+                element.stickyTableHeaders({ scrollableArea: container, "fixedOffset": 2 });
+            }, 0);
+        }
+    }
+}]);
 app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interval', 'uiGridConstants', 'uiGridGroupingConstants', function ($scope, $http, $filter, $timeout, $interval, uiGridConstants, uiGridGroupingConstants) {
     $http.get("data.php")
         .then(function (response) {
             $scope.records = response.data.records;
         });
-    // $scope.addTitle = "Task";
-    // $scope.addStartDate = "";
-    // $scope.addEndDate = "";
-    // $scope.addTag = "";
-    // $scope.addAssignee = "";
-    // $scope.addWorkingWeek = "Mon-Fri";
-    // $scope.addSchedulingMode = "Manual";
-    // $scope.addBudget = "";
+
     $scope.bulkSelect = "Delete";
     $scope.bulkStart = new Date();
     $scope.bulkEnd = new Date();
@@ -190,14 +194,17 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
                     $scope.records[index].EndDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
                 }
             }
-            if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() > 8) {
-                $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
-            } else if ($scope.bulkStart.getMonth() <= 8 && $scope.bulkStart.getDate() > 8) {
-                $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
-            } else if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() <= 8) {
-                $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
-            } else {
-                $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+            else {
+                $scope.records[index].Milestone = 0;
+                if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() > 8) {
+                    $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                } else if ($scope.bulkStart.getMonth() <= 8 && $scope.bulkStart.getDate() > 8) {
+                    $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                } else if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() <= 8) {
+                    $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                } else {
+                    $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                }
             }
         });
         $scope.bulkStart = new Date();
@@ -217,14 +224,17 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
                     $scope.records[index].StartDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
                 }
             }
-            if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() > 8) {
-                $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
-            } else if ($scope.bulkEnd.getMonth() <= 8 && $scope.bulkEnd.getDate() > 8) {
-                $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
-            } else if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() <= 8) {
-                $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
-            } else {
-                $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+            else {
+                $scope.records[index].Milestone = 0;
+                if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() > 8) {
+                    $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+                } else if ($scope.bulkEnd.getMonth() <= 8 && $scope.bulkEnd.getDate() > 8) {
+                    $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+                } else if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() <= 8) {
+                    $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+                } else {
+                    $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+                }
             }
         });
         $scope.bulkEnd = new Date();
@@ -431,7 +441,22 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
         var minutes = seconds / 60;
         var hours = minutes / 60;
         var days = hours / 24;
-        return days;
+        var displayedDays = Math.round(days)
+        return displayedDays;
+    };
+
+    $scope.dateDisplay = function (d) {
+        var date = new Date(d);
+        if (date.getMonth() > 8 && date.getDate() > 9) {
+            date = (date.getMonth() + 1) + "/" + (date.getDate()) + "/" + date.getFullYear();
+        } else if (date.getMonth() <= 8 && date.getDate() > 9) {
+            date = "0" + (date.getMonth() + 1) + "/" + (date.getDate()) + "/" + date.getFullYear();
+        } else if (date.getMonth() > 8 && date.getDate() <= 9) {
+            date = (date.getMonth() + 1) + "/0" + (date.getDate()) + "/" + date.getFullYear();
+        } else {
+            date = "0" + (date.getMonth() + 1) + "/0" + (date.getDate()) + "/" + date.getFullYear();
+        }
+        return date;
     };
 
     $scope.durationSuffix = function (startDate, endDate) {
@@ -476,10 +501,6 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
             .then(function (response) {
                 $scope.records = response.data.records;
             });
-    };
-
-    $scope.saveChanges = function () {
-
     };
     //
     // $scope.today = function() {
@@ -574,64 +595,4 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
     //
     //     return '';
     // }
-
-    /*$scope.gridOptions = {};
-     $scope.gridOptions.data = 'myData';
-     $scope.gridOptions.enableCellEditOnFocus = true;
-     $scope.gridOptions.enableColumnResizing = true;
-     $scope.gridOptions.enableFiltering = true;
-     $scope.gridOptions.enableGridMenu = true;
-     $scope.gridOptions.showGridFooter = true;
-     $scope.gridOptions.showColumnFooter = true;
-     $scope.gridOptions.fastWatch = true;
-
-     $scope.gridOptions.rowIdentity = function(row) {
-     return row.id;
-     };
-     $scope.gridOptions.getRowIdentity = function(row) {
-     return row.id;
-     };
-
-     $scope.gridOptions.columnDefs = [
-     { name:'Ticked', width:50},
-     { name:'Title', width:300, enableCellEdit: true },
-     { name:'Duration', width:100, },
-     { name:'End Date', width:100, enableCellEdit: true},
-     { name:'Tags', width:150, enableCellEdit: true },
-     { name:'Assignee', width:3-0, enableCellEdit: true },
-     //{ name:'predecessor[0].name', displayName:'1st predecessor', width:150, enableCellEdit: true },
-     //{ name:'predecessor[1].name', displayName:'2nd predecessor', width:150, enableCellEdit: true },
-     //{ name:'predecessor[2].name', displayName:'3rd predecessor', width:150, enableCellEdit: true },
-     ];
-
-     var i = 0;
-     $scope.refreshData = function() {
-     $scope.myData = [];
-
-     var sec = $interval(function () {
-
-     $http.get('data.php')
-     .success(function (data) {
-
-     data.forEach(function (row) {
-     row.id = i;
-     i++;
-     row.registered = new Date(row.registered)
-     $scope.myData.push(row);
-     });
-     })
-     }, 200, 10);
-
-
-     var timeout = $timeout(function () {
-     $interval.cancel(sec);
-     $scope.left = '';
-     }, 2000);
-
-     $scope.$on('$destroy', function () {
-     $timeout.cancel(timeout);
-     $interval.cancel(sec);
-     });
-     };*/
-
 }]);

@@ -45,14 +45,11 @@
     <script src="bower_components/angular-xeditable/dist/js/xeditable.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-    <!--<script src="js/bootstrap.js"></script>-->
-    <!--<script src="js/ui-bootstrap-tpls-2.4.0.min.js"></script>-->
-
-
+    <script src="bower_components/StickyTableHeaders/js/jquery.stickytableheaders.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
           crossorigin="anonymous">
+
 </head>
 <body>
 
@@ -114,17 +111,17 @@
             </div>
         </div>
         <div class="pull-right">
-            <div ng-dropdown-multiselect="" options="filterData" selected-model="filterModel" extra-settings="filterSettings"
-                 translation-texts="filterTexts"></div>
-        </div>
-        <div class="pull-right">
             <form>
                 <input type="text" class="form" placeholder="Search" ng-model="searchTable">
             </form>
         </div>
+        <div class="pull-right">
+            <div ng-dropdown-multiselect="" options="filterData" selected-model="filterModel" extra-settings="filterSettings"
+                 translation-texts="filterTexts"></div>
+        </div>
     </div>
-    <div class="editorContent">
-        <table id="tableEditor" style="width: auto">
+    <div class="editorContent" id="scrollable-area">
+        <table id="tableEditor" fixed-table-headers="scrollable-area" style="width: 100%">
             <tr class="tableHeader">
                 <td>
                     <div class="cell-div text-center">
@@ -172,10 +169,8 @@
                 </td>
             </tr>
             <tbody id="table-editor-body">
-                <tr ng-repeat="x in records | filter:searchTable | filter:filterModel"
-                    ng-style="{ width: window.width.toString() + 'px' }">
-
-                    <td style="width: 40px">
+                <tr ng-repeat="x in records | filter:searchTable | filter:filterModel">
+                    <td class="indexCells">
                         <div class="cell-div text-center">
                             <input ng-model="currentPackageSelected" ng-checked="allRowsSelected" ng-click="checkedIndex(x)" type="checkbox"/>
                         </div>
@@ -189,7 +184,7 @@
                     </td>
 
                     <td class="dateCells">
-                        <div ng-hide="editStartDateMode" ng-dblclick="editStartDateMode = true" translate>{{ x.StartDate }}</div>
+                        <div ng-hide="editStartDateMode" ng-dblclick="editStartDateMode = true" translate>{{ dateDisplay(x.StartDate) }}</div>
                         <div ng-show="editStartDateMode">
                             <input type="date" ng-model="x.StartDate" ng-blur="startDateEdit($index)"  placeholder="{{x.StartDate}}" focus-me="editStartDateMode">
                         </div>
@@ -200,7 +195,7 @@
                     </td>
 
                     <td class="dateCells">
-                        <div ng-hide="editEndDateMode" ng-dblclick="editEndDateMode = true" translate>{{ x.EndDate }}</div>
+                        <div ng-hide="editEndDateMode" ng-dblclick="editEndDateMode = true" translate>{{ dateDisplay(x.EndDate) }}</div>
                         <div ng-show="editEndDateMode">
                             <input type="date" ng-model="x.EndDate" ng-blur="endDateEdit($index)" placeholder="{{x.EndDate}}" focus-me="editEndDateMode">
                         </div>
@@ -246,7 +241,7 @@
                         </div>
                     </td>
                     <td class="modeCells">
-                        <div ng-hide="editModeMode" ng-dblclick="editModeMode = true" translate>{{x.WorkingWeek}}</div>
+                        <div ng-hide="editModeMode" ng-dblclick="editModeMode = true" translate>{{x.SchedulingMode}}</div>
                         <div ng-show="editModeMode">
                             <select ng-model="x.SchedulingMode" placeholder="{{x.SchedulingMode}}" focus-me="editModeMode" >
                                 <option ng-repeat="x in schedulingModes">{{x}}</option>
@@ -259,7 +254,11 @@
                             <input type="number" max="100" min="0" ng-model="x.Progress" placeholder="{{x.Progress}}" ng-blur="updateState($index)" focus-me="editProgressMode">
                         </div>
                     </td>
-                    <td class="stateCells">
+                    <td class="stateCells" ng-style="x.State === 'Verified' && {'background-color': 'green'} ||
+                                                     x.State === 'Awaiting sign-off' && {'background-color': 'greenyellow'} ||
+                                                     x.State === 'In progress' && {'background-color': 'yellow'} ||
+                                                     x.State === 'Not started' && {'background-color': 'orange'} ||
+                                                     x.State === 'Problem' && {'background-color': 'red'}">
                         <div ng-hide="editStateMode" ng-dblclick="editStateMode = true" translate>{{x.State}}</div>
                         <div ng-show="editStateMode">
                             <select ng-model="x.State" placeholder="{{x.State}}" ng-blur="updateProgress()" focus-me="editStateMode" >
@@ -271,17 +270,6 @@
             </tbody>
         </table>
     </div>
-    <!--<br>-->
-    <!--<button id="refreshButton" type="button" class="btn btn-success" ng-click="refreshData()">Refresh Data</button>  <strong>Calls Pending:</strong> <span ng-bind="callsPending"></span>-->
-    <!--<br>-->
-    <!--<br>-->
-    <!--<strong>{{ myData.length }} rows</strong>-->
-    <!--<br>-->
-    <!--<div id="grid1" ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-resize-columns ui-grid-pinning ui-grid-selection ui-grid-move-columns ui-grid-importer ui-grid-exporter ui-grid-grouping class="grid"></div>-->
-
-    <!--<div style="height: 25px;"></div>-->
-
-    <!--<div id="grid1" ui-grid="{ data: response }" class="grid"></div>-->
     <br>
     <div class="bottomLeft">
         <button class="cancelButton" ng-click="cancelChanges()"><span translate>Cancel</span></button>
@@ -289,40 +277,6 @@
     <div class="bottomRight">
         <button class="addButton" ng-click="addNewRow()"><span translate>Add New Package</span></button>
     </div>
-
-    <!--<pre>Selected date is: <em>{{dt | date:'fullDate' }}</em></pre>-->
-
-    <!--<h4>Popup</h4>-->
-    <!--<div class="row">-->
-    <!--<div class="col-md-6">-->
-    <!--<p class="input-group">-->
-    <!--<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />-->
-    <!--<span class="input-group-btn">-->
-    <!--<button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>-->
-    <!--</span>-->
-    <!--</p>-->
-    <!--</div>-->
-
-    <!--<div class="col-md-6">-->
-    <!--<p class="input-group">-->
-    <!--<input type="text" class="form-control" uib-datepicker-popup ng-model="dt" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />-->
-    <!--<span class="input-group-btn">-->
-    <!--<button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>-->
-    <!--</span>-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="row">-->
-    <!--<div class="col-md-6">-->
-    <!--<label>Format: <span class="muted-text">(manual alternate <em>{{altInputFormats[0]}}</em>)</span></label> <select class="form-control" ng-model="format" ng-options="f for f in formats"><option></option></select>-->
-    <!--</div>-->
-    <!--</div>-->
-
-    <!--<hr />-->
-    <!--<button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>-->
-    <!--<button type="button" class="btn btn-sm btn-default" ng-click="setDate(2009, 7, 24)">2009-08-24</button>-->
-    <!--<button type="button" class="btn btn-sm btn-danger" ng-click="clear()">Clear</button>-->
-    <!--<button type="button" class="btn btn-sm btn-default" ng-click="toggleMin()" uib-tooltip="After today restriction">Min date</button>-->
 </div>
 </body>
 </html>

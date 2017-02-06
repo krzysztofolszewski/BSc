@@ -1,5 +1,8 @@
 /* app css stylesheet */
 
+body {
+    min-width: 700px;
+}
 .menu {
   list-style: none;
   border-bottom: 0.1em solid black;
@@ -26,21 +29,24 @@
 
 table {
     word-break: normal;
-    width: auto;
+    width: 100%;
     text-wrap: avoid;
+    border-bottom: 1px solid lightgrey;
+    border-collapse: collapse;
 }
 
 th, td {
-    border: 1px solid gray;
+    border-bottom: 1px solid lightgrey;
     border-collapse: collapse;
-    padding: 15px;
+    white-space: nowrap;
+    padding-right: 10px;
 }
 
 tr{
-    border-bottom: 1px solid gray;
-    border-collapse: collapse;
     background-color: white;
     padding: 15px;
+    border-bottom: 1px solid lightgrey;
+    border-collapse: collapse;
 }
 
 tr.tableHeader {
@@ -91,6 +97,16 @@ button.saveButton{
     text-align: left;
     font-size: small;
     width: auto;
+    border-bottom: 1px solid lightgrey;
+    border-collapse: collapse;
+}
+
+#scrollable-area {
+    height: auto;
+    max-height: calc(100vh - 88px);
+    border-bottom: 1px solid lightgrey;
+    border-collapse: collapse;
+    overflow-y: scroll; /* <-- here is what is important*/
 }
 
 .pull-right {
@@ -129,3 +145,77 @@ form {
     right: 50%;
 }
 
+.titleCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.dateCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.durationCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.milestoneCells {
+    width: 7.69230769231%;
+    padding-right: 10px;
+}
+
+.tagCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.assigneeCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.budgetCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.extraCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.weekCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.modeCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.progressCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.stateCells {
+    width: 7.69230769231%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
+.indexCells {
+    min-width: 40px;
+}
