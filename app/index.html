@@ -19,25 +19,20 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-touch.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
-    <script src="//ui-grid.info/docs/grunt-scripts/csv.js"></script>
-    <script src="//ui-grid.info/docs/grunt-scripts/pdfmake.js"></script>
-    <script src="//ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
-    <script src="http://ui-grid.info/release/ui-grid.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-messages.js"></script>
-    <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
-    <link rel="stylesheet" href="main.css" type="text/css">
     <link rel="stylesheet" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css"/>
     <script type="text/javascript" src="bower_components/jquery/jquery.js"></script>
     <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.js"></script>
     <script type="text/javascript" src="bower_components/angular/angular.js"></script>
     <script type="text/javascript" src="bower_components/angular-ui-date/dist/date.js"></script>
-    <script src="release/ui-grid.js"></script>
-    <script src="release/ui-grid.css"></script>
     <script src="js/app.js"></script>
-    <script src="data.php"></script>
+    <script src="data.json"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
     <script src="components/version/version.js"></script>
     <script src="components/version/version-directive.js"></script>
     <script src="components/version/interpolate-filter.js"></script>
+    <script data-require="d3@*" data-semver="3.3.11" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/chinmaymk/angular-charts/bower/dist/angular-charts.min.js"></script>
     <script src="https://rawgit.com/dotansimha/angularjs-dropdown-multiselect/master/src/angularjs-dropdown-multiselect.js"></script>
     <script type="text/javascript" src="bower_components/angular/angular.js"></script>
     <script type="text/javascript" src="bower_components/angular-ui-utils/ui-utils.js"></script>
@@ -45,6 +40,9 @@
     <script src="bower_components/angular-xeditable/dist/js/xeditable.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type='text/javascript' src='js/angular-charts.min.js'></script>
+    <script src="node_modules/chart.js/Chart.min.js"></script>
+    <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
     <script src="bower_components/StickyTableHeaders/js/jquery.stickytableheaders.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
@@ -53,7 +51,7 @@
 </head>
 <body>
 
-<div ng-app="myApp" ng-controller="tableCtrl">
+<div ng-controller="tableCtrl">
     <div class="toolbar">
         <div class="pull-left">
             <button class="addButton" ng-click="addNewRow()"><span translate>Add New Package</span></button>
@@ -115,9 +113,10 @@
                 <input type="text" class="form" placeholder="Search" ng-model="searchTable">
             </form>
         </div>
-        <div class="pull-right">
-            <div ng-dropdown-multiselect="" options="filterData" selected-model="filterModel" extra-settings="filterSettings"
-                 translation-texts="filterTexts"></div>
+        <div class="pull-right" style="padding-top: 5px">
+            <select ng-model="filterDropdown" >
+                <option ng-repeat="x in filteredData">{{x}}</option>
+            </select>
         </div>
     </div>
     <div class="editorContent" id="scrollable-area">
@@ -169,7 +168,7 @@
                 </td>
             </tr>
             <tbody id="table-editor-body">
-                <tr ng-repeat="x in records | filter:searchTable | filter:filterModel">
+                <tr ng-repeat="x in records | filter:searchTable | filter:verifyDropdown()">
                     <td class="indexCells">
                         <div class="cell-div text-center">
                             <input ng-model="currentPackageSelected" ng-checked="allRowsSelected" ng-click="checkedIndex(x)" type="checkbox"/>
@@ -251,7 +250,7 @@
                     <td class="progressCells">
                         <div ng-hide="editProgressMode" ng-dblclick="editProgressMode = true" translate>{{x.Progress + "%"}}</div>
                         <div ng-show="editProgressMode">
-                            <input type="number" max="100" min="0" ng-model="x.Progress" placeholder="{{x.Progress}}" ng-blur="updateState($index)" focus-me="editProgressMode">
+                            <input type="number" max="100" min="0" ng-model="x.Progress" placeholder="{{x.Progress}}" ng-change="updateState()" focus-me="editProgressMode">
                         </div>
                     </td>
                     <td class="stateCells" ng-style="x.State === 'Verified' && {'background-color': 'green'} ||
@@ -261,7 +260,7 @@
                                                      x.State === 'Problem' && {'background-color': 'red'}">
                         <div ng-hide="editStateMode" ng-dblclick="editStateMode = true" translate>{{x.State}}</div>
                         <div ng-show="editStateMode">
-                            <select ng-model="x.State" placeholder="{{x.State}}" ng-blur="updateProgress()" focus-me="editStateMode" >
+                            <select ng-model="x.State" placeholder="{{x.State}}" ng-change="updateProgress()" focus-me="editStateMode" >
                                 <option ng-repeat="x in states">{{x}}</option>
                             </select>
                         </div>
@@ -276,6 +275,22 @@
     </div>
     <div class="bottomRight">
         <button class="addButton" ng-click="addNewRow()"><span translate>Add New Package</span></button>
+    </div>
+    <div class="bottomFarLeft">
+        <div
+            data-ac-chart="'pie'"
+            data-ac-data="dataStates"
+            data-ac-config="configStates"
+            class="chart">
+        </div>
+    </div>
+    <div class="bottomFarRight">
+        <div
+            data-ac-chart="'pie'"
+            data-ac-data="dataProgress"
+            data-ac-config="configProgress"
+            class="chart">
+        </div>
     </div>
 </div>
 </body>

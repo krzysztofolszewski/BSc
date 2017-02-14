@@ -1,7 +1,7 @@
 'use strict';
 
 // Declare app level module which depends on views, and components
-var app = angular.module('myApp', ['xeditable', 'ngTouch', 'ngMessages', 'ui.grid', 'ui.date', 'ui.keypress', 'ui.event'/*, 'ui.bootstrap', 'bootstrap'*/, 'ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.resizeColumns', 'ui.grid.pinning', 'ui.grid.selection', 'ui.grid.moveColumns', 'ui.grid.exporter', 'ui.grid.importer', 'ui.grid.grouping', 'angularjs-dropdown-multiselect']);
+var app = angular.module('myApp', ['xeditable', 'angularCharts', 'ngTouch', 'ngMessages', 'ui.date', 'ui.keypress', 'ui.event', 'angularjs-dropdown-multiselect']);
 app.directive('myEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {
@@ -19,7 +19,7 @@ app.directive('focusMe', ['$timeout', '$parse', function ($timeout, $parse) {
         link: function (scope, element, attrs) {
             var model = $parse(attrs.focusMe);
             scope.$watch(model, function (value) {
-                console.log('value=', value);
+                //console.log('value=', value);
                 if (value === true) {
                     $timeout(function () {
                         element[0].focus();
@@ -44,8 +44,9 @@ app.directive('fixedTableHeaders', ['$timeout', function($timeout) {
         }
     }
 }]);
-app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interval', 'uiGridConstants', 'uiGridGroupingConstants', function ($scope, $http, $filter, $timeout, $interval, uiGridConstants, uiGridGroupingConstants) {
-    $http.get("data.php")
+
+app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interval', function ($scope, $http, $filter) {
+    $http.get("data.json")
         .then(function (response) {
             $scope.records = response.data.records;
         });
@@ -64,6 +65,7 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
     $scope.startDateInput = new Date();
     $scope.endDateInput = new Date();
     $scope.searchTable = "";
+    $scope.filterDropdown = "All";
     $scope.states = ["Verified", "Awaiting sign-off", "In progress", "Problem", "Not started"];
     $scope.schedulingModes = ["Manual", "Automatic"];
     $scope.workingWeeks = ["Mon-Fri", "Mon-Sat", "Mon-Sun"];
@@ -135,11 +137,10 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
     };
 
     $scope.filterModel = [];
+    $scope.filteredData = ["All", "Verified", "Awaiting sign-off", "In progress", "Not started", "Problem"];
     $scope.filterData = [{id: 1, label: "Verified"}, {id: 2, label: "Awaiting sign-off"}, {id: 3, label: "In progress"}, {id: 4, label: "Problem"}, {id: 5, label: "Not started"}];
     $scope.bulks = ["Delete", "Start date", "End date", "Tags", "Assignee", "Budget", "Approved extra cost", "Working week", "Scheduling mode", "Progress", "Status"];
-    $scope.filterSettings = {};
     $scope.filterTexts = {buttonDefaultText: 'Filter tasks'};
-
     $scope.tickedIndex = [];
     $scope.tickedMilestone = [];
 
@@ -170,12 +171,12 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
         $scope.tickedIndex = [];
     };
 
-    $scope.filterStatus = function (index) {
-        angular.forEach($scope.records, function (value, index) {
-            var y = 0;
-            var index = $scope.records.indexOf(value);
-            angular.forEach($scope.filterModel, function (value, index) {
-                return ($scope.records[index].State === $scope.filterModel.label);
+    $scope.filterStatus = function () {
+        angular.forEach($scope.records, function (value, key) {
+            angular.forEach($scope.filterModel.label, function (v1, k1) {
+                if (value === v1) {
+                    return value;
+                }
             });
         });
     };
@@ -185,26 +186,34 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
             var index = $scope.records.indexOf(value);
             if ($scope.countDays ($scope.bulkStart, $scope.records[index].EndDate) < 0) {
                 if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() > 8) {
-                    $scope.records[index].EndDate = ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                    $scope.records[index].EndDate = ($scope.bulkStart.getMonth() + 1) +
+                        "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
                 } else if ($scope.bulkStart.getMonth() <= 8 && $scope.bulkStart.getDate() > 8) {
-                    $scope.records[index].EndDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                    $scope.records[index].EndDate = "0" + ($scope.bulkStart.getMonth() + 1) +
+                        "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
                 } else if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() <= 8) {
-                    $scope.records[index].EndDate = ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                    $scope.records[index].EndDate = ($scope.bulkStart.getMonth() + 1) +
+                        "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
                 } else {
-                    $scope.records[index].EndDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+                    $scope.records[index].EndDate = "0" + ($scope.bulkStart.getMonth() + 1) +
+                        "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
                 }
             }
             else {
                 $scope.records[index].Milestone = 0;
-                if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() > 8) {
-                    $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
-                } else if ($scope.bulkStart.getMonth() <= 8 && $scope.bulkStart.getDate() > 8) {
-                    $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
-                } else if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() <= 8) {
-                    $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
-                } else {
-                    $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) + "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
-                }
+            }
+            if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() > 8) {
+                $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) +
+                    "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+            } else if ($scope.bulkStart.getMonth() <= 8 && $scope.bulkStart.getDate() > 8) {
+                $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) +
+                    "/" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+            } else if ($scope.bulkStart.getMonth() > 8 && $scope.bulkStart.getDate() <= 8) {
+                $scope.records[index].StartDate = ($scope.bulkStart.getMonth() + 1) +
+                    "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
+            } else {
+                $scope.records[index].StartDate = "0" + ($scope.bulkStart.getMonth() + 1) +
+                    "/0" + ($scope.bulkStart.getDate()) + "/" + $scope.bulkStart.getFullYear();
             }
         });
         $scope.bulkStart = new Date();
@@ -226,15 +235,15 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
             }
             else {
                 $scope.records[index].Milestone = 0;
-                if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() > 8) {
-                    $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
-                } else if ($scope.bulkEnd.getMonth() <= 8 && $scope.bulkEnd.getDate() > 8) {
-                    $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
-                } else if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() <= 8) {
-                    $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
-                } else {
-                    $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
-                }
+            }
+            if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() > 8) {
+                $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+            } else if ($scope.bulkEnd.getMonth() <= 8 && $scope.bulkEnd.getDate() > 8) {
+                $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+            } else if ($scope.bulkEnd.getMonth() > 8 && $scope.bulkEnd.getDate() <= 8) {
+                $scope.records[index].EndDate = ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
+            } else {
+                $scope.records[index].EndDate = "0" + ($scope.bulkEnd.getMonth() + 1) + "/0" + ($scope.bulkEnd.getDate()) + "/" + $scope.bulkEnd.getFullYear();
             }
         });
         $scope.bulkEnd = new Date();
@@ -344,13 +353,17 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
 
     $scope.startDateEdit = function (index) {
         if ($scope.x.StartDate.getMonth() > 8 && $scope.x.StartDate.getDate() > 8) {
-            $scope.records[index].StartDate = ($scope.x.StartDate.getMonth() + 1) + "/" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
+            $scope.records[index].StartDate = ($scope.x.StartDate.getMonth() + 1) +
+                "/" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
         } else if ($scope.x.StartDate.getMonth() <= 8 && $scope.x.StartDate.getDate() > 8) {
-            $scope.records[index].StartDate = "0" + ($scope.x.StartDate.getMonth() + 1) + "/" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
+            $scope.records[index].StartDate = "0" + ($scope.x.StartDate.getMonth() + 1) +
+                "/" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
         } else if ($scope.x.StartDate.getMonth() > 8 && $scope.x.StartDate.getDate() <= 8) {
-            $scope.records[index].StartDate = ($scope.x.StartDate.getMonth() + 1) + "/0" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
+            $scope.records[index].StartDate = ($scope.x.StartDate.getMonth() + 1) + "" +
+                "/0" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
         } else {
-            $scope.records[index].StartDate = "0" + ($scope.x.StartDate.getMonth() + 1) + "/0" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
+            $scope.records[index].StartDate = "0" + ($scope.x.StartDate.getMonth() + 1) +
+                "/0" + ($scope.x.StartDate.getDate()) + "/" + $scope.x.StartDate.getFullYear();
         }
         $scope.editStartDateMode = false;
     };
@@ -410,7 +423,7 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
     };
 
     $scope.milestoneSelected = function (record){
-        if ($scope.records[record].Milestone === "Yes") {
+        if ($scope.records[record].Milestone === 1) {
             $scope.tickedMilestone.push(record);
             return true;
         }
@@ -431,7 +444,7 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
 
     $scope.checkBulk = function () {
         return $scope.bulkSelect.id;
-    }
+    };
 
     $scope.countDays = function (date1, date2) {
         var d1 = new Date(date1);
@@ -441,7 +454,7 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
         var minutes = seconds / 60;
         var hours = minutes / 60;
         var days = hours / 24;
-        var displayedDays = Math.round(days)
+        var displayedDays = Math.round(days);
         return displayedDays;
     };
 
@@ -487,112 +500,90 @@ app.controller('tableCtrl', ['$scope', '$http', '$filter', '$timeout', '$interva
         angular.forEach ($scope.tickedIndex, function (value, key) {
             ticks++;
         });
-        if (ticks == records) {
+        if (ticks === records) {
             $scope.tickedIndex = [];
         } else {
             angular.forEach ($scope.records, function (value, key) {
-                $scope.tickedIndex.push(key);
+                $scope.tickedIndex.push(value);
             });
         }
     };
 
+    $scope.getVerified = function () {
+        return _($scope.records).filter(function(value, key){
+            return value.State == "Verified";
+        }).length;
+    };
+
+    $scope.verifyDropdown = function () {
+        if ($scope.filterDropdown === "All") {
+            return "";
+        }
+        return $scope.filterDropdown;
+    };
+
+    $scope.configStates = {
+        colors: ['green', 'greenyellow', 'yellow', 'orange', 'red'],
+        title: 'Status chart',
+        tooltips: true,
+        labels: false,
+        legend: {
+            display: false,
+            position: 'right'
+        }
+    };
+
+    $scope.dataStates = {
+        data: [{
+            x: "Verified",
+            y: [$scope.getVerified()],
+            tooltip: "Verified"
+        }, {
+            x: "Awaiting sign-off",
+            y: [3],
+            tooltip: "Awaiting sign-off"
+        }, {
+            x: "In progress",
+            y: [1],
+            tooltip: "In progress"
+        }, {
+            x: "Not started",
+            y: [1],
+            tooltip: "Not started"
+        }, {
+            x: "Problem",
+            y: [1],
+            tooltip: "Problem"
+        }]
+    };
+
+    $scope.configProgress = {
+        colors: ['greenyellow', 'red'],
+        title: 'Progress chart',
+        tooltips: true,
+        labels: false,
+        legend: {
+            display: false,
+            position: 'right'
+        }
+    };
+
+    $scope.dataProgress = {
+        data: [{
+            x: "Done",
+            y: [30],
+            tooltip: "Done"
+        }, {
+            x: "To do",
+            y: [41],
+            tooltip: "To do"
+        }]
+    };
+
     $scope.cancelChanges = function () {
-        $http.get("data.php")
+        $http.get("data.json")
             .then(function (response) {
                 $scope.records = response.data.records;
             });
     };
-    //
-    // $scope.today = function() {
-    //     $scope.dt = new Date();
-    // };
-    // $scope.today();
-    //
-    // $scope.clear = function() {
-    //     $scope.dt = null;
-    // };
-    //
-    // $scope.inlineOptions = {
-    //     customClass: getDayClass,
-    //     minDate: new Date(),
-    //     showWeeks: true
-    // };
-    //
-    // $scope.dateOptions = {
-    //     dateDisabled: disabled,
-    //     formatYear: 'yy',
-    //     maxDate: new Date(2020, 5, 22),
-    //     minDate: new Date(),
-    //     startingDay: 1
-    // };
-    //
-    // // Disable weekend selection
-    // function disabled(data) {
-    //     var date = data.date,
-    //         mode = data.mode;
-    //     return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-    // }
-    //
-    // $scope.toggleMin = function() {
-    //     $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
-    //     $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
-    // };
-    //
-    // $scope.toggleMin();
-    //
-    // $scope.open1 = function() {
-    //     $scope.popup1.opened = true;
-    // };
-    //
-    // $scope.open2 = function() {
-    //     $scope.popup2.opened = true;
-    // };
-    //
-    // $scope.setDate = function(year, month, day) {
-    //     $scope.dt = new Date(year, month, day);
-    // };
-    //
-    // $scope.format = 'MM/dd/yyyy';
-    // $scope.altInputFormats = ['M!/d!/yyyy'];
-    //
-    // $scope.popup1 = {
-    //     opened: false
-    // };
-    //
-    // $scope.popup2 = {
-    //     opened: false
-    // };
-    //
-    // var tomorrow = new Date();
-    // tomorrow.setDate(tomorrow.getDate() + 1);
-    // var afterTomorrow = new Date();
-    // afterTomorrow.setDate(tomorrow.getDate() + 1);
-    // $scope.events = [
-    //     {
-    //         date: tomorrow,
-    //         status: 'full'
-    //     },
-    //     {
-    //         date: afterTomorrow,
-    //         status: 'partially'
-    //     }
-    // ];
-    //
-    // function getDayClass(data) {
-    //     var date = data.date,
-    //         mode = data.mode;
-    //     if (mode === 'day') {
-    //         var dayToCheck = new Date(date).setHours(0,0,0,0);
-    //
-    //         for (var i = 0; i < $scope.events.length; i++) {
-    //             var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
-    //
-    //             if (dayToCheck === currentDay) {
-    //                 return $scope.events[i].status;
-    //             }
-    //         }
-    //     }
-    //
-    //     return '';
-    // }
 }]);

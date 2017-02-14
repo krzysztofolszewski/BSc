@@ -80,11 +80,6 @@ button.cancelButton{
     color: white;
 }
 
-button.saveButton{
-    background-color: green;
-    color: white;
-}
-
 .toolbar{
     font-size: small;
     background-color: lightgrey;
@@ -103,7 +98,7 @@ button.saveButton{
 
 #scrollable-area {
     height: auto;
-    max-height: calc(100vh - 88px);
+    max-height: calc(100vh - 208px);
     border-bottom: 1px solid lightgrey;
     border-collapse: collapse;
     overflow-y: scroll; /* <-- here is what is important*/
@@ -143,6 +138,24 @@ form {
     position: absolute;
     bottom: 5px;
     right: 50%;
+}
+
+.bottomCentre {
+    position: absolute;
+    bottom: 5px;
+    align-self: center;
+}
+
+.bottomFarLeft {
+    position: absolute;
+    bottom: 0px;
+    left: 20px;
+}
+
+.bottomFarRight {
+    position: absolute;
+    bottom: 0px;
+    right: 20px;
 }
 
 .titleCells {
@@ -218,4 +231,8 @@ form {
 
 .indexCells {
     min-width: 40px;
+}
+.chart {
+    width: 150px;
+    height: 150px;
 }
